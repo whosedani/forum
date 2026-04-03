@@ -6,6 +6,7 @@ import { redis } from "@/lib/redis";
 import { keys } from "@/lib/keys";
 import { DEFAULT_FORUM_CONFIG } from "@/lib/constants";
 import type { ForumConfig } from "@/lib/types";
+import type { User } from "@/lib/types";
 
 export const metadata: Metadata = {
   title: "Classic Forum",
@@ -17,9 +18,21 @@ export default async function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const user = await getCurrentUser();
-  const config =
-    (await redis.get<ForumConfig>(keys.forumConfig())) ?? DEFAULT_FORUM_CONFIG;
+  let user: User | null = null;
+  let config: ForumConfig = DEFAULT_FORUM_CONFIG;
+
+  try {
+    user = await getCurrentUser();
+  } catch {
+    // ignore auth errors
+  }
+
+  try {
+    const stored = await redis.get<ForumConfig>(keys.forumConfig());
+    if (stored) config = stored;
+  } catch {
+    // ignore redis errors, use defaults
+  }
 
   return (
     <html lang="en">

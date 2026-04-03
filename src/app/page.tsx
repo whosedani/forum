@@ -9,80 +9,89 @@ import type { Category, User, Thread } from "@/lib/types";
 export const dynamic = "force-dynamic";
 
 export default async function ForumIndex() {
-  const user = await getCurrentUser();
-
-  if (user) {
-    await touchOnline(user.id);
-  }
-
-  // Fetch categories
-  const categoryIds = await redis.zrange(keys.categoriesList(), 0, -1);
+  let user: User | null = null;
   let categories: Category[] = [];
-
-  if (categoryIds.length > 0) {
-    const pipeline = redis.pipeline();
-    for (const id of categoryIds) {
-      pipeline.get(keys.category(id as string));
-    }
-    const results = await pipeline.exec();
-    categories = results.filter(Boolean) as Category[];
-  }
-
-  // Stats
-  const totalUsers = (await redis.get<number>(keys.usersCounter())) ?? 0;
-  const totalThreads = (await redis.get<number>(keys.threadsCounter())) ?? 0;
-  const totalPosts = (await redis.get<number>(keys.postsCounter())) ?? 0;
-
-  // Newest member
-  const newestIds = await redis.zrange(keys.usersList(), -1, -1);
+  let totalUsers = 0;
+  let totalThreads = 0;
+  let totalPosts = 0;
   let newestMember: { id: string; username: string } | null = null;
-  if (newestIds.length > 0) {
-    const u = await redis.get<User>(keys.user(newestIds[0] as string));
-    if (u) newestMember = { id: u.id, username: u.username };
-  }
-
-  // Online users
-  const cutoff = Date.now() - ONLINE_TTL_SECONDS * 1000;
-  await redis.zremrangebyscore(keys.usersOnline(), 0, cutoff);
-  const onlineIds = await redis.zrange(keys.usersOnline(), 0, -1);
   let onlineUsers: { id: string; username: string }[] = [];
+  let categoryThreads: Record<string, Thread[]> = {};
 
-  if (onlineIds.length > 0) {
-    const pipeline = redis.pipeline();
-    for (const id of onlineIds) {
-      pipeline.get(keys.user(id as string));
+  try {
+    user = await getCurrentUser();
+
+    if (user) {
+      await touchOnline(user.id);
     }
-    const results = await pipeline.exec();
-    onlineUsers = (results.filter(Boolean) as User[]).map((u) => ({
-      id: u.id,
-      username: u.username,
-    }));
-  }
 
-  // Fetch threads for each category (last 10)
-  const categoryThreads: Record<string, Thread[]> = {};
-  for (const cat of categories) {
-    const threadIds = await redis.zrange(keys.categoryThreads(cat.id), 0, 9, {
-      rev: true,
-    });
-    if (threadIds.length > 0) {
+    // Fetch categories
+    const categoryIds = await redis.zrange(keys.categoriesList(), 0, -1);
+
+    if (categoryIds.length > 0) {
       const pipeline = redis.pipeline();
-      for (const id of threadIds) {
-        pipeline.get(keys.thread(id as string));
+      for (const id of categoryIds) {
+        pipeline.get(keys.category(id as string));
       }
-      const threads = (await pipeline.exec()).filter(Boolean) as Thread[];
-      threads.sort((a, b) => {
-        if (a.is_pinned && !b.is_pinned) return -1;
-        if (!a.is_pinned && b.is_pinned) return 1;
-        return (
-          new Date(b.last_reply_at).getTime() -
-          new Date(a.last_reply_at).getTime()
-        );
-      });
-      categoryThreads[cat.id] = threads;
-    } else {
-      categoryThreads[cat.id] = [];
+      const results = await pipeline.exec();
+      categories = results.filter(Boolean) as Category[];
     }
+
+    // Stats
+    totalUsers = (await redis.get<number>(keys.usersCounter())) ?? 0;
+    totalThreads = (await redis.get<number>(keys.threadsCounter())) ?? 0;
+    totalPosts = (await redis.get<number>(keys.postsCounter())) ?? 0;
+
+    // Newest member
+    const newestIds = await redis.zrange(keys.usersList(), -1, -1);
+    if (newestIds.length > 0) {
+      const u = await redis.get<User>(keys.user(newestIds[0] as string));
+      if (u) newestMember = { id: u.id, username: u.username };
+    }
+
+    // Online users
+    const cutoff = Date.now() - ONLINE_TTL_SECONDS * 1000;
+    await redis.zremrangebyscore(keys.usersOnline(), 0, cutoff);
+    const onlineIds = await redis.zrange(keys.usersOnline(), 0, -1);
+
+    if (onlineIds.length > 0) {
+      const pipeline = redis.pipeline();
+      for (const id of onlineIds) {
+        pipeline.get(keys.user(id as string));
+      }
+      const results = await pipeline.exec();
+      onlineUsers = (results.filter(Boolean) as User[]).map((u) => ({
+        id: u.id,
+        username: u.username,
+      }));
+    }
+
+    // Fetch threads for each category (last 10)
+    for (const cat of categories) {
+      const threadIds = await redis.zrange(keys.categoryThreads(cat.id), 0, 9, {
+        rev: true,
+      });
+      if (threadIds.length > 0) {
+        const pipeline = redis.pipeline();
+        for (const id of threadIds) {
+          pipeline.get(keys.thread(id as string));
+        }
+        const threads = (await pipeline.exec()).filter(Boolean) as Thread[];
+        threads.sort((a, b) => {
+          if (a.is_pinned && !b.is_pinned) return -1;
+          if (!a.is_pinned && b.is_pinned) return 1;
+          return (
+            new Date(b.last_reply_at).getTime() -
+            new Date(a.last_reply_at).getTime()
+          );
+        });
+        categoryThreads[cat.id] = threads;
+      } else {
+        categoryThreads[cat.id] = [];
+      }
+    }
+  } catch (error) {
+    console.error("Forum index error:", error);
   }
 
   return (
