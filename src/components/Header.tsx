@@ -16,10 +16,9 @@ export default function Header({
           background: "linear-gradient(to bottom, #3A5795, #2A4780)",
           padding: "12px 20px",
           display: "flex",
-          justifyContent: "space-between",
+          justifyContent: "center",
           alignItems: "center",
-          flexWrap: "wrap",
-          gap: "8px",
+          position: "relative",
         }}
       >
         <Link
@@ -35,84 +34,57 @@ export default function Header({
           {config.name}
         </Link>
 
-        <div
-          style={{
-            display: "flex",
-            alignItems: "center",
-            gap: "12px",
-            fontSize: "11px",
-          }}
-        >
-          {user ? (
-            <>
-              <div
+        {/* Right side: user info (admin link only) */}
+        {user && (
+          <div
+            style={{
+              position: "absolute",
+              right: 20,
+              display: "flex",
+              alignItems: "center",
+              gap: "12px",
+              fontSize: "11px",
+            }}
+          >
+            <div
+              style={{
+                display: "flex",
+                alignItems: "center",
+                gap: "6px",
+                color: "white",
+              }}
+            >
+              <img
+                src={user.avatar_url || "/static/default-avatar.svg"}
+                alt=""
                 style={{
-                  display: "flex",
-                  alignItems: "center",
-                  gap: "6px",
-                  color: "white",
+                  width: 24,
+                  height: 24,
+                  borderRadius: "50%",
+                  objectFit: "cover",
                 }}
-              >
-                <img
-                  src={user.avatar_url || "/static/default-avatar.png"}
-                  alt=""
-                  style={{
-                    width: 24,
-                    height: 24,
-                    borderRadius: "50%",
-                    objectFit: "cover",
-                  }}
-                />
-                <span>
-                  Welcome,{" "}
-                  <Link
-                    href={`/users/${user.id}`}
-                    style={{ color: "white", fontWeight: "bold" }}
-                  >
-                    {user.username}
-                  </Link>
-                </span>
-              </div>
-              {user.is_admin && (
-                <Link
-                  href="/admin"
-                  style={{
-                    color: "#FFD700",
-                    fontWeight: "bold",
-                    textDecoration: "none",
-                  }}
-                >
-                  Admin Panel
-                </Link>
-              )}
+              />
               <Link
-                href="/api/auth/logout"
-                style={{ color: "#ccc", textDecoration: "none" }}
+                href={`/users/${user.id}`}
+                style={{ color: "white", fontWeight: "bold", textDecoration: "none" }}
               >
-                Log Out
+                {user.username}
               </Link>
-            </>
-          ) : (
-            <>
+            </div>
+            {user.is_admin && (
               <Link
-                href="/register"
+                href="/admin"
                 style={{
-                  color: "white",
+                  color: "#FFD700",
                   fontWeight: "bold",
                   textDecoration: "none",
                 }}
               >
-                Register
+                Admin Panel
               </Link>
-              <Link
-                href="/login"
-                style={{ color: "#ccc", textDecoration: "none" }}
-              >
-                Login
-              </Link>
-            </>
-          )}
-        </div>
+            )}
+          </div>
+        )}
       </div>
     </header>
   );

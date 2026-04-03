@@ -247,24 +247,16 @@ export default async function ThreadPage({
       )}
 
       {/* Reply form */}
-      {currentUser && !thread.is_locked ? (
-        <ReplyForm threadId={id} />
-      ) : thread.is_locked ? (
+      {thread.is_locked ? (
         <div
           className="info-panel"
           style={{ textAlign: "center", marginTop: 12 }}
         >
           🔒 This thread is locked. No new replies can be posted.
         </div>
-      ) : (
-        <div
-          className="info-panel"
-          style={{ textAlign: "center", marginTop: 12 }}
-        >
-          <a href="/login">Login</a> or <a href="/register">Register</a> to
-          reply to this thread.
-        </div>
-      )}
+      ) : currentUser ? (
+        <ReplyForm threadId={id} />
+      ) : null}
     </div>
   );
 }

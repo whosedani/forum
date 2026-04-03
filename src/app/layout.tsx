@@ -9,8 +9,8 @@ import type { ForumConfig } from "@/lib/types";
 import type { User } from "@/lib/types";
 
 export const metadata: Metadata = {
-  title: "Classic Forum",
-  description: "A classic discussion board",
+  title: "Forum Dog",
+  description: "Forum Dog - Discussion Board",
 };
 
 export default async function RootLayout({
@@ -19,7 +19,7 @@ export default async function RootLayout({
   children: React.ReactNode;
 }) {
   let user: User | null = null;
-  let config: ForumConfig = DEFAULT_FORUM_CONFIG;
+  let config: ForumConfig = { ...DEFAULT_FORUM_CONFIG, name: "Forum Dog" };
 
   try {
     user = await getCurrentUser();
@@ -57,7 +57,7 @@ export default async function RootLayout({
             color: "#888",
           }}
         >
-          Powered by Classic Forum
+          Powered by Forum Dog
         </footer>
       </body>
     </html>
