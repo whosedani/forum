@@ -107,8 +107,7 @@ export default function RegisterForm() {
         return;
       }
 
-      router.push("/");
-      router.refresh();
+      window.location.href = "/";
     } catch {
       setError("Registration failed. Please try again.");
     } finally {

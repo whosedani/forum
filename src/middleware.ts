@@ -4,9 +4,8 @@ export function middleware(request: NextRequest) {
   const token = request.cookies.get("forum_token");
   const { pathname } = request.nextUrl;
 
-  // Allow register page, API routes, and static files
+  // Allow API routes and static files always
   if (
-    pathname === "/register" ||
     pathname.startsWith("/api/") ||
     pathname.startsWith("/static/") ||
     pathname.startsWith("/_next/") ||
@@ -15,14 +14,14 @@ export function middleware(request: NextRequest) {
     return NextResponse.next();
   }
 
-  // No token = force register
-  if (!token) {
-    return NextResponse.redirect(new URL("/register", request.url));
+  // Already logged in — redirect away from /register
+  if (token && pathname === "/register") {
+    return NextResponse.redirect(new URL("/", request.url));
   }
 
-  // Block login page and logout — session is permanent
-  if (pathname === "/login" || pathname === "/api/auth/logout") {
-    return NextResponse.redirect(new URL("/", request.url));
+  // Not logged in — force /register
+  if (!token && pathname !== "/register") {
+    return NextResponse.redirect(new URL("/register", request.url));
   }
 
   return NextResponse.next();

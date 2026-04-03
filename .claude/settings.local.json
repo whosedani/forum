@@ -20,7 +20,11 @@
       "Bash(printf '%s' '1e7213bb7db7fb306c1d569b33c179f77fd459996cc7c318d523f1b056ec6ed3')",
       "Bash(vercel logs:*)",
       "Bash(vercel inspect:*)",
-      "Bash(curl -s \"https://internal-piranha-75149.upstash.io/ping\" -H \"Authorization: Bearer gQAAAAAAASWNAAIncDI4MmRkMjg5MWEyMGU0MTg4YTU5MDA3NjNkMTZkMTc2YXAyNzUxNDk\")"
+      "Bash(curl -s \"https://internal-piranha-75149.upstash.io/ping\" -H \"Authorization: Bearer gQAAAAAAASWNAAIncDI4MmRkMjg5MWEyMGU0MTg4YTU5MDA3NjNkMTZkMTc2YXAyNzUxNDk\")",
+      "Bash(curl -s \"https://internal-piranha-75149.upstash.io/flushdb\" -H \"Authorization: Bearer gQAAAAAAASWNAAIncDI4MmRkMjg5MWEyMGU0MTg4YTU5MDA3NjNkMTZkMTc2YXAyNzUxNDk\")",
+      "Bash(printf '%s' 'https://wired-wren-77622.upstash.io')",
+      "Bash(printf '%s' 'gQAAAAAAAS82AAIncDJkYTZkNDdhODhmOTE0ODRhODkzZmIxMDFmODIyNTNjN3AyNzc2MjI')",
+      "Bash(curl -s \"https://wired-wren-77622.upstash.io/ping\" -H \"Authorization: Bearer gQAAAAAAAS82AAIncDJkYTZkNDdhODhmOTE0ODRhODkzZmIxMDFmODIyNTNjN3AyNzc2MjI\")"
     ]
   }
 }
