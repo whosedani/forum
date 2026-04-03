@@ -3,7 +3,9 @@ import { notFound } from "next/navigation";
 import { redis } from "@/lib/redis";
 import { keys } from "@/lib/keys";
 import { ONLINE_TTL_SECONDS } from "@/lib/constants";
+import { getCurrentUser } from "@/lib/auth";
 import Breadcrumbs from "@/components/Breadcrumbs";
+import AvatarUpload from "@/components/AvatarUpload";
 import type { User } from "@/lib/types";
 import { getAvatarSrc } from "@/lib/avatar";
 
@@ -19,7 +21,9 @@ export default async function UserProfilePage({
   const user = await redis.get<User>(keys.user(id));
   if (!user) notFound();
 
-  // Check if online
+  const currentUser = await getCurrentUser();
+  const isOwnProfile = currentUser?.id === id;
+
   const cutoff = Date.now() - ONLINE_TTL_SECONDS * 1000;
   const onlineScore = await redis.zscore(keys.usersOnline(), id);
   const isOnline = onlineScore !== null && Number(onlineScore) > cutoff;
@@ -63,6 +67,9 @@ export default async function UserProfilePage({
                 objectFit: "cover",
               }}
             />
+            {isOwnProfile && (
+              <AvatarUpload currentUrl={getAvatarSrc(user.avatar_url)} />
+            )}
           </div>
 
           <div style={{ flex: 1, minWidth: 200 }}>
@@ -91,22 +98,10 @@ export default async function UserProfilePage({
               )}
             </h2>
 
-            <table
-              style={{
-                fontSize: 12,
-                borderCollapse: "collapse",
-              }}
-            >
+            <table style={{ fontSize: 12, borderCollapse: "collapse" }}>
               <tbody>
                 <tr>
-                  <td
-                    style={{
-                      padding: "4px 16px 4px 0",
-                      color: "#888",
-                      fontWeight: "bold",
-                      fontSize: 11,
-                    }}
-                  >
+                  <td style={{ padding: "4px 16px 4px 0", color: "#888", fontWeight: "bold", fontSize: 11 }}>
                     Joined:
                   </td>
                   <td style={{ padding: "4px 0" }}>
@@ -118,27 +113,13 @@ export default async function UserProfilePage({
                   </td>
                 </tr>
                 <tr>
-                  <td
-                    style={{
-                      padding: "4px 16px 4px 0",
-                      color: "#888",
-                      fontWeight: "bold",
-                      fontSize: 11,
-                    }}
-                  >
+                  <td style={{ padding: "4px 16px 4px 0", color: "#888", fontWeight: "bold", fontSize: 11 }}>
                     Total Posts:
                   </td>
                   <td style={{ padding: "4px 0" }}>{user.post_count}</td>
                 </tr>
                 <tr>
-                  <td
-                    style={{
-                      padding: "4px 16px 4px 0",
-                      color: "#888",
-                      fontWeight: "bold",
-                      fontSize: 11,
-                    }}
-                  >
+                  <td style={{ padding: "4px 16px 4px 0", color: "#888", fontWeight: "bold", fontSize: 11 }}>
                     Status:
                   </td>
                   <td style={{ padding: "4px 0" }}>

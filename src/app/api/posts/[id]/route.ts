@@ -38,5 +38,8 @@ export async function DELETE(
     }
   }
 
+  // Decrement global post counter
+  await redis.decr(keys.postsCounter());
+
   return NextResponse.json({ success: true, thread_id: post.thread_id });
 }

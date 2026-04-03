@@ -137,5 +137,9 @@ export async function DELETE(
     await redis.set(keys.category(thread.category_id), JSON.stringify(category));
   }
 
+  // Decrement global counters
+  await redis.decrby(keys.postsCounter(), postIds.length);
+  await redis.decr(keys.threadsCounter());
+
   return NextResponse.json({ success: true, category_id: thread.category_id });
 }
