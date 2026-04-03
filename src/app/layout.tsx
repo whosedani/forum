@@ -11,6 +11,9 @@ import type { User } from "@/lib/types";
 export const metadata: Metadata = {
   title: "Forum Dog",
   description: "Forum Dog - Discussion Board",
+  icons: {
+    icon: "/favicon.jpeg",
+  },
 };
 
 export default async function RootLayout({
