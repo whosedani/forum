@@ -42,15 +42,11 @@ export async function POST(request: NextRequest) {
           { status: 400 }
         );
       }
-      try {
-        const blob = await put(`avatars/${Date.now()}-${avatarFile.name}`, avatarFile, {
-          access: "public",
-          addRandomSuffix: true,
-        });
-        avatar_url = blob.url;
-      } catch {
-        // Blob storage not configured, use default avatar
-      }
+      const blob = await put(`avatars/${Date.now()}-${avatarFile.name}`, avatarFile, {
+        access: "public",
+        addRandomSuffix: true,
+      });
+      avatar_url = blob.url;
     }
 
     const id = String(await redis.incr(keys.usersCounter()));
@@ -79,7 +75,7 @@ export async function POST(request: NextRequest) {
   } catch (error) {
     console.error("Registration error:", error);
     return NextResponse.json(
-      { error: "Registration failed" },
+      { error: "Registration failed. " + (error instanceof Error ? error.message : "") },
       { status: 500 }
     );
   }
