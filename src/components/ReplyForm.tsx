@@ -11,7 +11,6 @@ export default function ReplyForm({ threadId }: { threadId: string }) {
   const [uploading, setUploading] = useState(false);
   const [images, setImages] = useState<string[]>([]);
   const fileRef = useRef<HTMLInputElement>(null);
-  const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -35,19 +34,7 @@ export default function ReplyForm({ threadId }: { threadId: string }) {
       const res = await fetch("/api/upload", { method: "POST", body: formData });
       const data = await res.json();
       if (!res.ok) { setError(data.error || "Upload failed"); return; }
-
-      const tag = `[img]${data.url}[/img]`;
       setImages((prev) => [...prev, data.url]);
-
-      const textarea = textareaRef.current;
-      if (textarea) {
-        const start = textarea.selectionStart;
-        const end = textarea.selectionEnd;
-        const newContent = content.substring(0, start) + tag + content.substring(end);
-        setContent(newContent);
-      } else {
-        setContent((prev) => prev + (prev ? "\n" : "") + tag);
-      }
     } catch {
       setError("Upload failed. Please try again.");
     } finally {
@@ -57,24 +44,27 @@ export default function ReplyForm({ threadId }: { threadId: string }) {
 
   const removeImage = (url: string) => {
     setImages((prev) => prev.filter((u) => u !== url));
-    setContent((prev) => prev.replace(`[img]${url}[/img]`, "").trim());
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
 
-    if (!content.trim()) {
+    if (!content.trim() && images.length === 0) {
       setError("Reply content is required");
       return;
     }
+
+    // Append image tags to content
+    const imageTags = images.map((url) => `[img]${url}[/img]`).join("\n");
+    const fullContent = [content.trim(), imageTags].filter(Boolean).join("\n");
 
     setLoading(true);
     try {
       const res = await fetch(`/api/threads/${threadId}/posts`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ content: content.trim() }),
+        body: JSON.stringify({ content: fullContent }),
       });
       const data = await res.json();
       if (!res.ok) { setError(data.error || "Failed to post reply"); return; }
@@ -102,7 +92,6 @@ export default function ReplyForm({ threadId }: { threadId: string }) {
         }}
       >
         <textarea
-          ref={textareaRef}
           className="forum-textarea"
           value={content}
           onChange={(e) => setContent(e.target.value)}
@@ -110,7 +99,6 @@ export default function ReplyForm({ threadId }: { threadId: string }) {
           style={{ minHeight: 120 }}
         />
 
-        {/* Image previews */}
         {images.length > 0 && (
           <div style={{ display: "flex", gap: 8, flexWrap: "wrap", margin: "8px 0" }}>
             {images.map((url, i) => (

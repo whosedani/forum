@@ -16,8 +16,8 @@ export default function NewThreadForm({
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const [uploading, setUploading] = useState(false);
+  const [images, setImages] = useState<string[]>([]);
   const fileRef = useRef<HTMLInputElement>(null);
-  const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -41,16 +41,7 @@ export default function NewThreadForm({
       const res = await fetch("/api/upload", { method: "POST", body: formData });
       const data = await res.json();
       if (!res.ok) { setError(data.error || "Upload failed"); return; }
-
-      const tag = `[img]${data.url}[/img]`;
-      const textarea = textareaRef.current;
-      if (textarea) {
-        const start = textarea.selectionStart;
-        const end = textarea.selectionEnd;
-        setContent(content.substring(0, start) + tag + content.substring(end));
-      } else {
-        setContent((prev) => prev + (prev ? "\n" : "") + tag);
-      }
+      setImages((prev) => [...prev, data.url]);
     } catch {
       setError("Upload failed. Please try again.");
     } finally {
@@ -58,19 +49,26 @@ export default function NewThreadForm({
     }
   };
 
+  const removeImage = (url: string) => {
+    setImages((prev) => prev.filter((u) => u !== url));
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
 
     if (!title.trim()) { setError("Title is required"); return; }
-    if (!content.trim()) { setError("Content is required"); return; }
+    if (!content.trim() && images.length === 0) { setError("Content is required"); return; }
+
+    const imageTags = images.map((url) => `[img]${url}[/img]`).join("\n");
+    const fullContent = [content.trim(), imageTags].filter(Boolean).join("\n");
 
     setLoading(true);
     try {
       const res = await fetch(`/api/categories/${categoryId}/threads`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ title: title.trim(), content: content.trim() }),
+        body: JSON.stringify({ title: title.trim(), content: fullContent }),
       });
       const data = await res.json();
       if (!res.ok) { setError(data.error || "Failed to create thread"); return; }
@@ -111,13 +109,55 @@ export default function NewThreadForm({
             </td>
             <td>
               <textarea
-                ref={textareaRef}
                 className="forum-textarea"
                 value={content}
                 onChange={(e) => setContent(e.target.value)}
                 placeholder="Write your post here..."
                 style={{ minHeight: 200 }}
               />
+
+              {images.length > 0 && (
+                <div style={{ display: "flex", gap: 8, flexWrap: "wrap", margin: "8px 0" }}>
+                  {images.map((url, i) => (
+                    <div
+                      key={i}
+                      style={{
+                        position: "relative",
+                        width: 80,
+                        height: 80,
+                        border: "1px solid #B8C9E0",
+                        borderRadius: 4,
+                        overflow: "hidden",
+                      }}
+                    >
+                      <img src={url} alt="" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+                      <button
+                        type="button"
+                        onClick={() => removeImage(url)}
+                        style={{
+                          position: "absolute",
+                          top: 2,
+                          right: 2,
+                          width: 18,
+                          height: 18,
+                          background: "rgba(204,51,51,0.85)",
+                          color: "white",
+                          border: "none",
+                          borderRadius: "50%",
+                          fontSize: 11,
+                          cursor: "pointer",
+                          lineHeight: "18px",
+                          textAlign: "center",
+                          padding: 0,
+                        }}
+                      >
+                        x
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              )}
+
               <div style={{ marginTop: 6 }}>
                 <input
                   type="file"
