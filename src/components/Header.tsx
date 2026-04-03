@@ -1,6 +1,7 @@
 import Link from "next/link";
 import type { User } from "@/lib/types";
 import type { ForumConfig } from "@/lib/types";
+import { getAvatarSrc } from "@/lib/avatar";
 
 export default function Header({
   user,
@@ -55,7 +56,7 @@ export default function Header({
               }}
             >
               <img
-                src={user.avatar_url || "/static/default-avatar.svg"}
+                src={getAvatarSrc(user.avatar_url)}
                 alt=""
                 style={{
                   width: 24,

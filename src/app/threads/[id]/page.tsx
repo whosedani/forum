@@ -9,6 +9,7 @@ import ReplyForm from "@/components/ReplyForm";
 import ModActions from "@/components/ModActions";
 import DeletePostButton from "@/components/DeletePostButton";
 import type { Thread, Post, User, Category } from "@/lib/types";
+import { getAvatarSrc } from "@/lib/avatar";
 
 export const dynamic = "force-dynamic";
 
@@ -142,7 +143,7 @@ export default async function ThreadPage({
               <div className="post-userinfo">
                 <div style={{ marginBottom: 8 }}>
                   <img
-                    src={author?.avatar_url || "/static/default-avatar.svg"}
+                    src={getAvatarSrc(author?.avatar_url)}
                     alt=""
                     style={{
                       width: 80,

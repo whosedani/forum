@@ -5,6 +5,7 @@ import { keys } from "@/lib/keys";
 import { ONLINE_TTL_SECONDS } from "@/lib/constants";
 import Breadcrumbs from "@/components/Breadcrumbs";
 import type { User } from "@/lib/types";
+import { getAvatarSrc } from "@/lib/avatar";
 
 export const dynamic = "force-dynamic";
 
@@ -52,7 +53,7 @@ export default async function UserProfilePage({
         >
           <div style={{ textAlign: "center" }}>
             <img
-              src={user.avatar_url || "/static/default-avatar.svg"}
+              src={getAvatarSrc(user.avatar_url)}
               alt={user.username}
               style={{
                 width: 150,

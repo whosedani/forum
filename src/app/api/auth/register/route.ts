@@ -43,7 +43,7 @@ export async function POST(request: NextRequest) {
         );
       }
       const blob = await put(`avatars/${Date.now()}-${avatarFile.name}`, avatarFile, {
-        access: "public",
+        access: "private",
         addRandomSuffix: true,
       });
       avatar_url = blob.url;
