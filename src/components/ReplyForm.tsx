@@ -9,21 +9,19 @@ export default function ReplyForm({ threadId }: { threadId: string }) {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const [uploading, setUploading] = useState(false);
+  const [images, setImages] = useState<string[]>([]);
   const fileRef = useRef<HTMLInputElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
-
-    // Reset input so same file can be re-selected
     e.target.value = "";
 
     if (!["image/png", "image/jpeg", "image/jpg"].includes(file.type)) {
       setError("Only PNG and JPG images are allowed");
       return;
     }
-
     if (file.size > 5 * 1024 * 1024) {
       setError("Image must be under 5MB");
       return;
@@ -31,30 +29,21 @@ export default function ReplyForm({ threadId }: { threadId: string }) {
 
     setUploading(true);
     setError("");
-
     try {
       const formData = new FormData();
       formData.append("image", file);
-
-      const res = await fetch("/api/upload", {
-        method: "POST",
-        body: formData,
-      });
+      const res = await fetch("/api/upload", { method: "POST", body: formData });
       const data = await res.json();
+      if (!res.ok) { setError(data.error || "Upload failed"); return; }
 
-      if (!res.ok) {
-        setError(data.error || "Upload failed");
-        return;
-      }
-
-      // Insert image tag at cursor position
       const tag = `[img]${data.url}[/img]`;
+      setImages((prev) => [...prev, data.url]);
+
       const textarea = textareaRef.current;
       if (textarea) {
         const start = textarea.selectionStart;
         const end = textarea.selectionEnd;
-        const newContent =
-          content.substring(0, start) + tag + content.substring(end);
+        const newContent = content.substring(0, start) + tag + content.substring(end);
         setContent(newContent);
       } else {
         setContent((prev) => prev + (prev ? "\n" : "") + tag);
@@ -64,6 +53,11 @@ export default function ReplyForm({ threadId }: { threadId: string }) {
     } finally {
       setUploading(false);
     }
+  };
+
+  const removeImage = (url: string) => {
+    setImages((prev) => prev.filter((u) => u !== url));
+    setContent((prev) => prev.replace(`[img]${url}[/img]`, "").trim());
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -83,13 +77,10 @@ export default function ReplyForm({ threadId }: { threadId: string }) {
         body: JSON.stringify({ content: content.trim() }),
       });
       const data = await res.json();
-
-      if (!res.ok) {
-        setError(data.error || "Failed to post reply");
-        return;
-      }
+      if (!res.ok) { setError(data.error || "Failed to post reply"); return; }
 
       setContent("");
+      setImages([]);
       router.refresh();
     } catch {
       setError("Failed to post reply. Please try again.");
@@ -118,6 +109,53 @@ export default function ReplyForm({ threadId }: { threadId: string }) {
           placeholder="Write your reply here..."
           style={{ minHeight: 120 }}
         />
+
+        {/* Image previews */}
+        {images.length > 0 && (
+          <div style={{ display: "flex", gap: 8, flexWrap: "wrap", margin: "8px 0" }}>
+            {images.map((url, i) => (
+              <div
+                key={i}
+                style={{
+                  position: "relative",
+                  width: 80,
+                  height: 80,
+                  border: "1px solid #B8C9E0",
+                  borderRadius: 4,
+                  overflow: "hidden",
+                }}
+              >
+                <img
+                  src={url}
+                  alt=""
+                  style={{ width: "100%", height: "100%", objectFit: "cover" }}
+                />
+                <button
+                  type="button"
+                  onClick={() => removeImage(url)}
+                  style={{
+                    position: "absolute",
+                    top: 2,
+                    right: 2,
+                    width: 18,
+                    height: 18,
+                    background: "rgba(204,51,51,0.85)",
+                    color: "white",
+                    border: "none",
+                    borderRadius: "50%",
+                    fontSize: 11,
+                    cursor: "pointer",
+                    lineHeight: "18px",
+                    textAlign: "center",
+                    padding: 0,
+                  }}
+                >
+                  x
+                </button>
+              </div>
+            ))}
+          </div>
+        )}
 
         {error && (
           <div
