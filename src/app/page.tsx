@@ -77,6 +77,17 @@ export default async function ForumIndex() {
           pipeline.get(keys.thread(id as string));
         }
         const threads = (await pipeline.exec()).filter(Boolean) as Thread[];
+
+        // Fetch view counts from separate keys
+        const viewPipeline = redis.pipeline();
+        for (const t of threads) {
+          viewPipeline.get(keys.threadViews(t.id));
+        }
+        const viewResults = await viewPipeline.exec();
+        threads.forEach((t, i) => {
+          t.views_count = (viewResults[i] as number) || 0;
+        });
+
         threads.sort((a, b) => {
           if (a.is_pinned && !b.is_pinned) return -1;
           if (!a.is_pinned && b.is_pinned) return 1;
