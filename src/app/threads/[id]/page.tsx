@@ -142,7 +142,7 @@ export default async function ThreadPage({
             <div key={post.id} className="post-card">
               {/* User info sidebar */}
               <div className="post-userinfo">
-                <div style={{ marginBottom: 8 }}>
+                <div style={{ marginBottom: 8, display: "flex", justifyContent: "center" }}>
                   <img
                     src={getAvatarSrc(author?.avatar_url)}
                     alt=""
@@ -152,6 +152,7 @@ export default async function ThreadPage({
                       borderRadius: 4,
                       border: "1px solid #B8C9E0",
                       objectFit: "cover",
+                      display: "block",
                     }}
                   />
                 </div>
