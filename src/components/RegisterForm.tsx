@@ -208,8 +208,19 @@ export default function RegisterForm() {
                     accept="image/*"
                     ref={fileRef}
                     onChange={handleAvatarChange}
-                    style={{ fontSize: 11 }}
+                    style={{ display: "none" }}
                   />
+                  <button
+                    type="button"
+                    className="forum-btn"
+                    style={{ fontSize: 10, padding: "4px 12px" }}
+                    onClick={() => fileRef.current?.click()}
+                  >
+                    Choose File
+                  </button>
+                  <span style={{ marginLeft: 8, fontSize: 11, color: "#888" }}>
+                    {avatarPreview ? "File selected" : "No file chosen"}
+                  </span>
                 </div>
               </div>
               <canvas
