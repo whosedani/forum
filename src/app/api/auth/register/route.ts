@@ -42,11 +42,15 @@ export async function POST(request: NextRequest) {
           { status: 400 }
         );
       }
-      const blob = await put(`avatars/${Date.now()}-${avatarFile.name}`, avatarFile, {
-        access: "public",
-        addRandomSuffix: true,
-      });
-      avatar_url = blob.url;
+      try {
+        const blob = await put(`avatars/${Date.now()}-${avatarFile.name}`, avatarFile, {
+          access: "public",
+          addRandomSuffix: true,
+        });
+        avatar_url = blob.url;
+      } catch {
+        // Blob storage not configured, use default avatar
+      }
     }
 
     const id = String(await redis.incr(keys.usersCounter()));
