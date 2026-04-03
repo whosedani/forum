@@ -10,6 +10,7 @@ import ModActions from "@/components/ModActions";
 import DeletePostButton from "@/components/DeletePostButton";
 import type { Thread, Post, User, Category } from "@/lib/types";
 import { getAvatarSrc } from "@/lib/avatar";
+import PostBody from "@/components/PostBody";
 
 export const dynamic = "force-dynamic";
 
@@ -211,7 +212,7 @@ export default async function ThreadPage({
                     <span style={{ color: "#888" }}>#{postNumber}</span>
                   </span>
                 </div>
-                <div className="post-body">{post.content}</div>
+                <PostBody content={post.content} />
               </div>
             </div>
           );
