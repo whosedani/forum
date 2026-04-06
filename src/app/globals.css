@@ -66,12 +66,16 @@ a:hover {
   vertical-align: top;
 }
 
-.forum-table tr td {
+.forum-table tr:nth-child(odd) td {
   background: #FFFFEB;
 }
 
-.forum-table tr.pinned td {
+.forum-table tr:nth-child(even) td {
   background: #F0E0D6;
+}
+
+.forum-table tr.pinned td {
+  background: #F0C0B0;
 }
 
 /* Category header */
