@@ -1,10 +1,11 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import Header from "@/components/Header";
-import { getCurrentUser } from "@/lib/auth";
+import { getCurrentUser, getTokenFromCookies, clearAuthCookie } from "@/lib/auth";
 import { redis } from "@/lib/redis";
 import { keys } from "@/lib/keys";
 import { DEFAULT_FORUM_CONFIG } from "@/lib/constants";
+import { redirect } from "next/navigation";
 import type { ForumConfig } from "@/lib/types";
 import type { User } from "@/lib/types";
 
@@ -25,7 +26,15 @@ export default async function RootLayout({
   let config: ForumConfig = { ...DEFAULT_FORUM_CONFIG, name: "Forum Dog" };
 
   try {
-    user = await getCurrentUser();
+    const token = await getTokenFromCookies();
+    if (token) {
+      user = await getCurrentUser();
+      if (!user) {
+        // Token exists but user not found (deleted) — clear stale cookie
+        await clearAuthCookie();
+        redirect("/register");
+      }
+    }
   } catch {
     // ignore auth errors
   }
