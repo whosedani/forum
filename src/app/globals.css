@@ -67,11 +67,11 @@ a:hover {
 }
 
 .forum-table tr:nth-child(odd) td {
-  background: #F0E0D6;
+  background: #FFFFEB;
 }
 
 .forum-table tr:nth-child(even) td {
-  background: #FFFFEB;
+  background: #F0E0D6;
 }
 
 .forum-table tr.pinned td {
