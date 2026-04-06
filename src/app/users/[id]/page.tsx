@@ -41,7 +41,7 @@ export default async function UserProfilePage({
         style={{
           marginTop: 8,
           border: "1px solid #D9BFB7",
-          background: "white",
+          background: "#F0E0D6",
         }}
       >
         <div className="category-header">User Profile</div>
@@ -78,7 +78,7 @@ export default async function UserProfilePage({
                 fontFamily: '"Trebuchet MS", Arial, sans-serif',
                 fontSize: 20,
                 fontWeight: "bold",
-                color: "#333",
+                color: "#800000",
                 margin: "0 0 12px 0",
               }}
             >
