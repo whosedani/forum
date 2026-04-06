@@ -14,6 +14,9 @@ export default function AdminPanel() {
   const [newCatDesc, setNewCatDesc] = useState("");
   const [newCatOrder, setNewCatOrder] = useState(0);
   const [makeAdminUsername, setMakeAdminUsername] = useState("");
+  const [editingCat, setEditingCat] = useState<string | null>(null);
+  const [editName, setEditName] = useState("");
+  const [editDesc, setEditDesc] = useState("");
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
 
@@ -96,6 +99,28 @@ export default function AdminPanel() {
       loadCategories();
     } else {
       showErr("Failed to delete category");
+    }
+  };
+
+  const startEditing = (cat: Category) => {
+    setEditingCat(cat.id);
+    setEditName(cat.name);
+    setEditDesc(cat.description);
+  };
+
+  const saveCategory = async (id: string) => {
+    const res = await fetch("/api/admin/categories", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ action: "update", id, name: editName, description: editDesc }),
+    });
+    if (res.ok) {
+      showMsg("Category updated!");
+      setEditingCat(null);
+      loadCategories();
+      router.refresh();
+    } else {
+      showErr("Failed to update category");
     }
   };
 
@@ -241,18 +266,67 @@ export default function AdminPanel() {
                 {categories.map((cat) => (
                   <tr key={cat.id}>
                     <td style={{ textAlign: "center" }}>{cat.sort_order}</td>
-                    <td style={{ fontWeight: "bold" }}>{cat.name}</td>
-                    <td>{cat.description}</td>
+                    <td>
+                      {editingCat === cat.id ? (
+                        <input
+                          className="forum-input"
+                          value={editName}
+                          onChange={(e) => setEditName(e.target.value)}
+                          style={{ maxWidth: 200 }}
+                        />
+                      ) : (
+                        <span style={{ fontWeight: "bold" }}>{cat.name}</span>
+                      )}
+                    </td>
+                    <td>
+                      {editingCat === cat.id ? (
+                        <input
+                          className="forum-input"
+                          value={editDesc}
+                          onChange={(e) => setEditDesc(e.target.value)}
+                        />
+                      ) : (
+                        cat.description
+                      )}
+                    </td>
                     <td style={{ textAlign: "center" }}>{cat.thread_count}</td>
                     <td style={{ textAlign: "center" }}>{cat.post_count}</td>
-                    <td>
-                      <button
-                        className="forum-btn forum-btn-red"
-                        style={{ fontSize: 10, padding: "3px 8px" }}
-                        onClick={() => deleteCategory(cat.id)}
-                      >
-                        Delete
-                      </button>
+                    <td style={{ display: "flex", gap: 4 }}>
+                      {editingCat === cat.id ? (
+                        <>
+                          <button
+                            className="forum-btn"
+                            style={{ fontSize: 10, padding: "3px 8px" }}
+                            onClick={() => saveCategory(cat.id)}
+                          >
+                            Save
+                          </button>
+                          <button
+                            className="forum-btn"
+                            style={{ fontSize: 10, padding: "3px 8px", background: "#888", borderColor: "#666" }}
+                            onClick={() => setEditingCat(null)}
+                          >
+                            Cancel
+                          </button>
+                        </>
+                      ) : (
+                        <>
+                          <button
+                            className="forum-btn"
+                            style={{ fontSize: 10, padding: "3px 8px" }}
+                            onClick={() => startEditing(cat)}
+                          >
+                            Edit
+                          </button>
+                          <button
+                            className="forum-btn forum-btn-red"
+                            style={{ fontSize: 10, padding: "3px 8px" }}
+                            onClick={() => deleteCategory(cat.id)}
+                          >
+                            Delete
+                          </button>
+                        </>
+                      )}
                     </td>
                   </tr>
                 ))}
