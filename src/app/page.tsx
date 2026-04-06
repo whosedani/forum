@@ -107,7 +107,14 @@ export default async function ForumIndex() {
 
   return (
     <div>
-      <Breadcrumbs items={[{ label: "Forum Index" }]} />
+      {/* Hero banner */}
+      <div style={{ width: "100%", overflow: "hidden", lineHeight: 0 }}>
+        <img
+          src="/hero.png"
+          alt="Forum Dog"
+          style={{ width: "100%", height: "auto", display: "block" }}
+        />
+      </div>
 
       {/* Stats bar */}
       <div className="info-panel" style={{ marginTop: 0, marginBottom: 12 }}>
