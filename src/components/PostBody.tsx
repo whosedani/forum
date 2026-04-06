@@ -17,7 +17,7 @@ export default function PostBody({ content }: { content: string }) {
                   style={{
                     maxWidth: "100%",
                     maxHeight: 600,
-                    border: "1px solid #B8C9E0",
+                    border: "1px solid #D9BFB7",
                     borderRadius: 4,
                   }}
                 />

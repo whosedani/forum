@@ -125,7 +125,7 @@ export default function NewThreadForm({
                         position: "relative",
                         width: 80,
                         height: 80,
-                        border: "1px solid #B8C9E0",
+                        border: "1px solid #D9BFB7",
                         borderRadius: 4,
                         overflow: "hidden",
                       }}
@@ -169,7 +169,7 @@ export default function NewThreadForm({
                 <button
                   type="button"
                   className="forum-btn"
-                  style={{ background: "#6B84B5", borderColor: "#5A7299", fontSize: 10, padding: "4px 12px" }}
+                  style={{ background: "#994444", borderColor: "#883333", fontSize: 10, padding: "4px 12px" }}
                   onClick={() => fileRef.current?.click()}
                   disabled={uploading}
                 >

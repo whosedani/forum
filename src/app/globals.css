@@ -1,20 +1,22 @@
 @import "tailwindcss";
 
 @theme inline {
-  --color-forum-blue: #3A5795;
-  --color-forum-blue-dark: #2A4780;
-  --color-forum-blue-hover: #1A3570;
-  --color-forum-bg: #F5F5F5;
-  --color-forum-row-alt: #F0F4F8;
-  --color-forum-border: #B8C9E0;
-  --color-forum-text: #333333;
+  --color-forum-primary: #800000;
+  --color-forum-primary-dark: #660000;
+  --color-forum-primary-hover: #550000;
+  --color-forum-bg: #FFFFEB;
+  --color-forum-row-alt: #F0E0D6;
+  --color-forum-border: #D9BFB7;
+  --color-forum-text: #800000;
   --color-forum-text-muted: #888888;
-  --color-forum-sticky: #FFF8DC;
-  --color-forum-admin-red: #CC3333;
-  --color-forum-online-green: #4CAF50;
-  --color-forum-post-bg: #FAFBFC;
-  --color-forum-userinfo: #EEF2F7;
-  --color-forum-header-row: #D6E0EF;
+  --color-forum-sticky: #F0C0B0;
+  --color-forum-admin-red: #CC1105;
+  --color-forum-online-green: #117743;
+  --color-forum-post-bg: #F0E0D6;
+  --color-forum-userinfo: #F0E0D6;
+  --color-forum-header-row: #E4D5CA;
+  --color-forum-link: #800000;
+  --color-forum-name: #117743;
 
   --font-forum-body: "Verdana", "Tahoma", "Arial", sans-serif;
   --font-forum-heading: "Trebuchet MS", "Arial", sans-serif;
@@ -22,19 +24,19 @@
 
 body {
   background: var(--color-forum-bg);
-  color: var(--color-forum-text);
+  color: #333;
   font-family: var(--font-forum-body);
   font-size: 12px;
   margin: 0;
 }
 
 a {
-  color: var(--color-forum-blue);
+  color: var(--color-forum-link);
   text-decoration: none;
 }
 
 a:hover {
-  color: var(--color-forum-blue-hover);
+  color: var(--color-forum-primary-hover);
   text-decoration: underline;
 }
 
@@ -43,7 +45,7 @@ a:hover {
   width: 100%;
   border-collapse: collapse;
   border: 1px solid var(--color-forum-border);
-  background: white;
+  background: #F0E0D6;
 }
 
 .forum-table th {
@@ -65,11 +67,11 @@ a:hover {
 }
 
 .forum-table tr:nth-child(odd) td {
-  background: white;
+  background: #F0E0D6;
 }
 
 .forum-table tr:nth-child(even) td {
-  background: var(--color-forum-row-alt);
+  background: #FFFFEB;
 }
 
 .forum-table tr.pinned td {
@@ -78,49 +80,49 @@ a:hover {
 
 /* Category header */
 .category-header {
-  background: linear-gradient(to bottom, var(--color-forum-blue), var(--color-forum-blue-dark));
-  color: white;
+  background: linear-gradient(to bottom, #800000, #660000);
+  color: #F0E0D6;
   font-family: var(--font-forum-heading);
   font-size: 13px;
   font-weight: bold;
   padding: 8px 12px;
-  border: 1px solid var(--color-forum-blue-dark);
+  border: 1px solid #550000;
 }
 
 /* Buttons */
 .forum-btn {
   display: inline-block;
-  background: var(--color-forum-blue);
-  color: white;
+  background: #800000;
+  color: #F0E0D6;
   font-family: var(--font-forum-body);
   font-size: 11px;
   font-weight: bold;
   padding: 6px 16px;
-  border: 1px solid var(--color-forum-blue-dark);
+  border: 1px solid #660000;
   border-radius: 3px;
   cursor: pointer;
   text-decoration: none;
 }
 
 .forum-btn:hover {
-  background: var(--color-forum-blue-hover);
-  color: white;
+  background: #660000;
+  color: #F0E0D6;
   text-decoration: none;
 }
 
 .forum-btn-red {
-  background: var(--color-forum-admin-red);
-  border-color: #AA2222;
+  background: #CC1105;
+  border-color: #AA0000;
 }
 
 .forum-btn-red:hover {
-  background: #AA2222;
+  background: #AA0000;
 }
 
 /* Inputs */
 .forum-input {
   border: 1px solid var(--color-forum-border);
-  background: white;
+  background: #FFFFEB;
   font-family: var(--font-forum-body);
   font-size: 12px;
   padding: 6px 8px;
@@ -130,13 +132,13 @@ a:hover {
 
 .forum-input:focus {
   outline: none;
-  border-color: var(--color-forum-blue);
-  box-shadow: 0 0 3px rgba(58, 87, 149, 0.3);
+  border-color: #800000;
+  box-shadow: 0 0 3px rgba(128, 0, 0, 0.3);
 }
 
 .forum-textarea {
   border: 1px solid var(--color-forum-border);
-  background: white;
+  background: #FFFFEB;
   font-family: var(--font-forum-body);
   font-size: 12px;
   padding: 8px;
@@ -148,8 +150,8 @@ a:hover {
 
 .forum-textarea:focus {
   outline: none;
-  border-color: var(--color-forum-blue);
-  box-shadow: 0 0 3px rgba(58, 87, 149, 0.3);
+  border-color: #800000;
+  box-shadow: 0 0 3px rgba(128, 0, 0, 0.3);
 }
 
 /* Post layout */
@@ -157,13 +159,13 @@ a:hover {
   display: flex;
   border: 1px solid var(--color-forum-border);
   margin-bottom: 8px;
-  background: white;
+  background: #F0E0D6;
 }
 
 .post-userinfo {
   width: 180px;
   min-width: 180px;
-  background: var(--color-forum-userinfo);
+  background: #E4D5CA;
   padding: 12px;
   border-right: 1px solid var(--color-forum-border);
   text-align: center;
@@ -178,12 +180,13 @@ a:hover {
 
 .post-header {
   padding: 6px 12px;
-  border-bottom: 1px solid var(--color-forum-userinfo);
+  border-bottom: 1px solid var(--color-forum-border);
   font-size: 10px;
   color: var(--color-forum-text-muted);
   display: flex;
   justify-content: space-between;
   align-items: center;
+  background: #E4D5CA;
 }
 
 .post-body {
@@ -193,15 +196,17 @@ a:hover {
   flex: 1;
   white-space: pre-wrap;
   word-wrap: break-word;
+  color: #333;
 }
 
 /* Info panels */
 .info-panel {
-  background: var(--color-forum-userinfo);
+  background: #F0E0D6;
   border: 1px solid var(--color-forum-border);
   padding: 8px 12px;
   font-size: 11px;
   margin-top: 8px;
+  color: #800000;
 }
 
 /* Online dot */
@@ -216,14 +221,14 @@ a:hover {
 
 /* Breadcrumbs */
 .breadcrumbs {
-  background: white;
+  background: #F0E0D6;
   border-bottom: 1px solid var(--color-forum-border);
   padding: 6px 12px;
   font-size: 11px;
 }
 
 .breadcrumbs a {
-  color: var(--color-forum-blue);
+  color: #800000;
 }
 
 .breadcrumbs span {

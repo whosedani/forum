@@ -129,7 +129,7 @@ export default function AdminPanel() {
       <div
         style={{
           display: "flex",
-          borderBottom: "2px solid #3A5795",
+          borderBottom: "2px solid #800000",
           marginBottom: 12,
         }}
       >
@@ -142,10 +142,10 @@ export default function AdminPanel() {
               fontSize: 12,
               fontFamily: '"Trebuchet MS", Arial, sans-serif',
               fontWeight: "bold",
-              background: activeTab === tab.id ? "#3A5795" : "#D6E0EF",
+              background: activeTab === tab.id ? "#800000" : "#E4D5CA",
               color: activeTab === tab.id ? "white" : "#333",
-              border: "1px solid #B8C9E0",
-              borderBottom: activeTab === tab.id ? "1px solid #3A5795" : "1px solid #B8C9E0",
+              border: "1px solid #D9BFB7",
+              borderBottom: activeTab === tab.id ? "1px solid #800000" : "1px solid #D9BFB7",
               cursor: "pointer",
               marginRight: 2,
             }}

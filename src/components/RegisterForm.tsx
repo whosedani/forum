@@ -172,10 +172,10 @@ export default function RegisterForm() {
                   style={{
                     width: 100,
                     height: 100,
-                    border: "1px solid #B8C9E0",
+                    border: "1px solid #D9BFB7",
                     borderRadius: 4,
                     overflow: "hidden",
-                    background: "#EEF2F7",
+                    background: "#E4D5CA",
                     display: "flex",
                     alignItems: "center",
                     justifyContent: "center",

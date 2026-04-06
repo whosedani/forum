@@ -40,7 +40,7 @@ export default async function UserProfilePage({
       <div
         style={{
           marginTop: 8,
-          border: "1px solid #B8C9E0",
+          border: "1px solid #D9BFB7",
           background: "white",
         }}
       >
@@ -63,7 +63,7 @@ export default async function UserProfilePage({
                 width: 150,
                 height: 150,
                 borderRadius: 4,
-                border: "1px solid #B8C9E0",
+                border: "1px solid #D9BFB7",
                 objectFit: "cover",
               }}
             />

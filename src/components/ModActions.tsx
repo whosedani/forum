@@ -53,7 +53,7 @@ export default function ModActions({
         gap: 6,
         padding: "6px 12px",
         background: "#FFF8DC",
-        border: "1px solid #B8C9E0",
+        border: "1px solid #D9BFB7",
         borderTop: "none",
         fontSize: 11,
       }}

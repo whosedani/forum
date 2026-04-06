@@ -98,12 +98,12 @@ export default async function CategoryPage({
       {category.description && (
         <div
           style={{
-            background: "#D6E0EF",
+            background: "#E4D5CA",
             padding: "4px 12px",
             fontSize: 11,
             color: "#555",
-            borderLeft: "1px solid #B8C9E0",
-            borderRight: "1px solid #B8C9E0",
+            borderLeft: "1px solid #D9BFB7",
+            borderRight: "1px solid #D9BFB7",
           }}
         >
           {category.description}
@@ -194,7 +194,7 @@ export default async function CategoryPage({
                     {dateStr}
                     <br />
                     by{" "}
-                    <span style={{ color: "#3A5795" }}>
+                    <span style={{ color: "#800000" }}>
                       {thread.last_reply_by || thread.author_name}
                     </span>
                   </td>

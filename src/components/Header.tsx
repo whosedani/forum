@@ -14,12 +14,13 @@ export default function Header({
     <header>
       <div
         style={{
-          background: "linear-gradient(to bottom, #3A5795, #2A4780)",
+          background: "linear-gradient(to bottom, #800000, #660000)",
           padding: "12px 20px",
           display: "flex",
           justifyContent: "center",
           alignItems: "center",
           position: "relative",
+          borderBottom: "1px solid #550000",
         }}
       >
         <Link
@@ -28,14 +29,13 @@ export default function Header({
             fontFamily: '"Trebuchet MS", Arial, sans-serif',
             fontSize: "22px",
             fontWeight: "bold",
-            color: "white",
+            color: "#F0E0D6",
             textDecoration: "none",
           }}
         >
           {config.name}
         </Link>
 
-        {/* Right side: user info (admin link only) */}
         {user && (
           <div
             style={{
@@ -52,7 +52,7 @@ export default function Header({
                 display: "flex",
                 alignItems: "center",
                 gap: "6px",
-                color: "white",
+                color: "#F0E0D6",
               }}
             >
               <img
@@ -63,11 +63,12 @@ export default function Header({
                   height: 24,
                   borderRadius: "50%",
                   objectFit: "cover",
+                  border: "1px solid #D9BFB7",
                 }}
               />
               <Link
                 href={`/users/${user.id}`}
-                style={{ color: "white", fontWeight: "bold", textDecoration: "none" }}
+                style={{ color: "#F0E0D6", fontWeight: "bold", textDecoration: "none" }}
               >
                 {user.username}
               </Link>

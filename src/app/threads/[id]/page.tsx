@@ -90,7 +90,7 @@ export default async function ThreadPage({
       {/* Thread title bar */}
       <div
         style={{
-          background: "linear-gradient(to bottom, #3A5795, #2A4780)",
+          background: "linear-gradient(to bottom, #800000, #660000)",
           color: "white",
           padding: "10px 12px",
           fontFamily: '"Trebuchet MS", Arial, sans-serif',
@@ -110,12 +110,12 @@ export default async function ThreadPage({
       {/* Thread info bar */}
       <div
         style={{
-          background: "#D6E0EF",
+          background: "#E4D5CA",
           padding: "4px 12px",
           fontSize: 10,
           color: "#555",
-          borderLeft: "1px solid #B8C9E0",
-          borderRight: "1px solid #B8C9E0",
+          borderLeft: "1px solid #D9BFB7",
+          borderRight: "1px solid #D9BFB7",
         }}
       >
         Views: {views} | Replies: {thread.replies_count}
@@ -150,7 +150,7 @@ export default async function ThreadPage({
                       width: 80,
                       height: 80,
                       borderRadius: 4,
-                      border: "1px solid #B8C9E0",
+                      border: "1px solid #D9BFB7",
                       objectFit: "cover",
                       display: "block",
                     }}
@@ -162,7 +162,7 @@ export default async function ThreadPage({
                     style={{
                       fontWeight: "bold",
                       fontSize: 12,
-                      color: "#3A5795",
+                      color: "#800000",
                     }}
                   >
                     {author?.username || "Unknown"}
