@@ -13,6 +13,8 @@ import { getAvatarSrc } from "@/lib/avatar";
 import PostBody from "@/components/PostBody";
 
 export const dynamic = "force-dynamic";
+export const fetchCache = "force-no-store";
+export const revalidate = 0;
 
 export default async function ThreadPage({
   params,

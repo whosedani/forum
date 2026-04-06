@@ -7,6 +7,8 @@ import Breadcrumbs from "@/components/Breadcrumbs";
 import type { Category, User, Thread } from "@/lib/types";
 
 export const dynamic = "force-dynamic";
+export const fetchCache = "force-no-store";
+export const revalidate = 0;
 
 export default async function ForumIndex() {
   let user: User | null = null;
