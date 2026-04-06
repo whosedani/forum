@@ -26,7 +26,15 @@
       "Bash(printf '%s' 'gQAAAAAAAS82AAIncDJkYTZkNDdhODhmOTE0ODRhODkzZmIxMDFmODIyNTNjN3AyNzc2MjI')",
       "Bash(curl -s \"https://wired-wren-77622.upstash.io/ping\" -H \"Authorization: Bearer gQAAAAAAAS82AAIncDJkYTZkNDdhODhmOTE0ODRhODkzZmIxMDFmODIyNTNjN3AyNzc2MjI\")",
       "Bash(grep -rn export.*noStore node_modules/next/cache.d.ts)",
-      "Bash(grep -rn export.*noStore node_modules/next/dist/server/web/spec-extension/)"
+      "Bash(grep -rn export.*noStore node_modules/next/dist/server/web/spec-extension/)",
+      "Bash(curl -s \"https://wired-wren-77622.upstash.io/zrange/forum:thread:1:posts/0/-1\" -H \"Authorization: Bearer gQAAAAAAAS82AAIncDJkYTZkNDdhODhmOTE0ODRhODkzZmIxMDFmODIyNTNjN3AyNzc2MjI\")",
+      "Bash(curl -s \"https://wired-wren-77622.upstash.io/zrange/forum:thread:2:posts/0/-1\" -H \"Authorization: Bearer gQAAAAAAAS82AAIncDJkYTZkNDdhODhmOTE0ODRhODkzZmIxMDFmODIyNTNjN3AyNzc2MjI\")",
+      "Bash(curl -s \"https://wired-wren-77622.upstash.io/zrange/forum:thread:3:posts/0/-1\" -H \"Authorization: Bearer gQAAAAAAAS82AAIncDJkYTZkNDdhODhmOTE0ODRhODkzZmIxMDFmODIyNTNjN3AyNzc2MjI\")",
+      "Bash(curl -s \"https://wired-wren-77622.upstash.io/get/forum:post:3\" -H \"Authorization: Bearer gQAAAAAAAS82AAIncDJkYTZkNDdhODhmOTE0ODRhODkzZmIxMDFmODIyNTNjN3AyNzc2MjI\")",
+      "Bash(curl -s \"https://wired-wren-77622.upstash.io/get/forum:post:1\" -H \"Authorization: Bearer gQAAAAAAAS82AAIncDJkYTZkNDdhODhmOTE0ODRhODkzZmIxMDFmODIyNTNjN3AyNzc2MjI\")",
+      "Bash(curl -s \"https://wired-wren-77622.upstash.io/get/forum:post:2\" -H \"Authorization: Bearer gQAAAAAAAS82AAIncDJkYTZkNDdhODhmOTE0ODRhODkzZmIxMDFmODIyNTNjN3AyNzc2MjI\")",
+      "Bash(curl -s \"https://wired-wren-77622.upstash.io/get/forum:posts:counter\" -H \"Authorization: Bearer gQAAAAAAAS82AAIncDJkYTZkNDdhODhmOTE0ODRhODkzZmIxMDFmODIyNTNjN3AyNzc2MjI\")",
+      "Bash(curl -s \"https://wired-wren-77622.upstash.io/get/forum:threads:counter\" -H \"Authorization: Bearer gQAAAAAAAS82AAIncDJkYTZkNDdhODhmOTE0ODRhODkzZmIxMDFmODIyNTNjN3AyNzc2MjI\")"
     ]
   }
 }
