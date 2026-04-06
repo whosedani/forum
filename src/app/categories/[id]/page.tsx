@@ -28,33 +28,32 @@ export default async function CategoryPage({
   const category = await redis.get<Category>(keys.category(id));
   if (!category) notFound();
 
-  const total = await redis.zcard(keys.categoryThreads(id));
-  const totalPages = Math.max(1, Math.ceil(total / THREADS_PER_PAGE));
-  const start = (page - 1) * THREADS_PER_PAGE;
-
-  const threadIds = await redis.zrange(
-    keys.categoryThreads(id),
-    start,
-    start + THREADS_PER_PAGE - 1,
-    { rev: true }
-  );
-
-  let threads: Thread[] = [];
-  if (threadIds.length > 0) {
+  // Fetch ALL threads to separate pinned from regular
+  const allThreadIds = await redis.zrange(keys.categoryThreads(id), 0, -1, { rev: true });
+  let allThreads: Thread[] = [];
+  if (allThreadIds.length > 0) {
     const pipeline = redis.pipeline();
-    for (const tid of threadIds) {
+    for (const tid of allThreadIds) {
       pipeline.get(keys.thread(tid as string));
     }
-    threads = (await pipeline.exec()).filter(Boolean) as Thread[];
-    threads.sort((a, b) => {
-      if (a.is_pinned && !b.is_pinned) return -1;
-      if (!a.is_pinned && b.is_pinned) return 1;
-      return (
-        new Date(b.last_reply_at).getTime() -
-        new Date(a.last_reply_at).getTime()
-      );
-    });
+    allThreads = (await pipeline.exec()).filter(Boolean) as Thread[];
   }
+
+  const pinnedThreads = allThreads
+    .filter((t) => t.is_pinned)
+    .sort((a, b) => new Date(b.last_reply_at).getTime() - new Date(a.last_reply_at).getTime());
+  const regularThreads = allThreads
+    .filter((t) => !t.is_pinned)
+    .sort((a, b) => new Date(b.last_reply_at).getTime() - new Date(a.last_reply_at).getTime());
+
+  // Paginate only regular threads
+  const totalRegular = regularThreads.length;
+  const totalPages = Math.max(1, Math.ceil(totalRegular / THREADS_PER_PAGE));
+  const start = (page - 1) * THREADS_PER_PAGE;
+  const pageRegularThreads = regularThreads.slice(start, start + THREADS_PER_PAGE);
+
+  // Combine: pinned always first, then paginated regular
+  const threads = [...pinnedThreads, ...pageRegularThreads];
 
   // Get view counts
   const viewPipeline = redis.pipeline();

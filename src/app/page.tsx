@@ -68,19 +68,29 @@ export default async function ForumIndex() {
       }));
     }
 
-    // Fetch threads for each category (last 10)
+    // Fetch threads for each category — pinned always shown, plus last 10 regular
     for (const cat of categories) {
-      const threadIds = await redis.zrange(keys.categoryThreads(cat.id), 0, 9, {
+      const allIds = await redis.zrange(keys.categoryThreads(cat.id), 0, -1, {
         rev: true,
       });
-      if (threadIds.length > 0) {
+      if (allIds.length > 0) {
         const pipeline = redis.pipeline();
-        for (const id of threadIds) {
+        for (const id of allIds) {
           pipeline.get(keys.thread(id as string));
         }
-        const threads = (await pipeline.exec()).filter(Boolean) as Thread[];
+        const allThreads = (await pipeline.exec()).filter(Boolean) as Thread[];
 
-        // Fetch view counts from separate keys
+        const pinned = allThreads
+          .filter((t) => t.is_pinned)
+          .sort((a, b) => new Date(b.last_reply_at).getTime() - new Date(a.last_reply_at).getTime());
+        const regular = allThreads
+          .filter((t) => !t.is_pinned)
+          .sort((a, b) => new Date(b.last_reply_at).getTime() - new Date(a.last_reply_at).getTime())
+          .slice(0, 10);
+
+        const threads = [...pinned, ...regular];
+
+        // Fetch view counts
         const viewPipeline = redis.pipeline();
         for (const t of threads) {
           viewPipeline.get(keys.threadViews(t.id));
@@ -90,14 +100,6 @@ export default async function ForumIndex() {
           t.views_count = (viewResults[i] as number) || 0;
         });
 
-        threads.sort((a, b) => {
-          if (a.is_pinned && !b.is_pinned) return -1;
-          if (!a.is_pinned && b.is_pinned) return 1;
-          return (
-            new Date(b.last_reply_at).getTime() -
-            new Date(a.last_reply_at).getTime()
-          );
-        });
         categoryThreads[cat.id] = threads;
       } else {
         categoryThreads[cat.id] = [];
