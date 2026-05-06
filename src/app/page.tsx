@@ -117,7 +117,7 @@ export default async function ForumIndex() {
       <div style={{ width: "100%", overflow: "hidden", lineHeight: 0 }}>
         <img
           src="/hero.png"
-          alt="Forum Dog"
+          alt="Forum"
           style={{ width: "100%", height: "auto", display: "block" }}
         />
       </div>

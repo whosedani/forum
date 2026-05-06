@@ -10,8 +10,8 @@ import type { ForumConfig } from "@/lib/types";
 import type { User } from "@/lib/types";
 
 export const metadata: Metadata = {
-  title: "Forum Dog",
-  description: "Forum Dog - Discussion Board",
+  title: "Forum",
+  description: "Forum - Discussion Board",
   icons: {
     icon: "/favicon.jpeg",
   },
@@ -23,7 +23,7 @@ export default async function RootLayout({
   children: React.ReactNode;
 }) {
   let user: User | null = null;
-  let config: ForumConfig = { ...DEFAULT_FORUM_CONFIG, name: "Forum Dog" };
+  let config: ForumConfig = { ...DEFAULT_FORUM_CONFIG, name: "Forum" };
 
   try {
     const token = await getTokenFromCookies();
@@ -69,7 +69,7 @@ export default async function RootLayout({
             color: "#888",
           }}
         >
-          Powered by Forum Dog
+          Powered by Forum
         </footer>
       </body>
     </html>
