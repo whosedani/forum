@@ -22,6 +22,7 @@ export async function DELETE(
   const pipeline = redis.pipeline();
   pipeline.del(keys.post(id));
   pipeline.zrem(keys.threadPosts(post.thread_id), id);
+  pipeline.del(keys.postUpvotes(id));
   await pipeline.exec();
 
   // Update thread reply count

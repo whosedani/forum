@@ -8,9 +8,12 @@ import Breadcrumbs from "@/components/Breadcrumbs";
 import ReplyForm from "@/components/ReplyForm";
 import ModActions from "@/components/ModActions";
 import DeletePostButton from "@/components/DeletePostButton";
+import UpvoteButton from "@/components/UpvoteButton";
 import type { Thread, Post, User, Category } from "@/lib/types";
 import { getAvatarSrc } from "@/lib/avatar";
 import PostBody from "@/components/PostBody";
+
+type PostWithVotes = Post & { upvote_count: number; viewer_voted: boolean };
 
 export const dynamic = "force-dynamic";
 export const fetchCache = "force-no-store";
@@ -39,26 +42,40 @@ export default async function ThreadPage({
 
   const category = await redis.get<Category>(keys.category(thread.category_id));
 
-  // Fetch posts
-  const total = await redis.zcard(keys.threadPosts(id));
+  // Fetch ALL posts (re-sort by upvotes globally, then paginate)
+  const allPostIds = await redis.zrange(keys.threadPosts(id), 0, -1);
+  const total = allPostIds.length;
   const totalPages = Math.max(1, Math.ceil(total / POSTS_PER_PAGE));
-  const start = (page - 1) * POSTS_PER_PAGE;
-
-  const postIds = await redis.zrange(
-    keys.threadPosts(id),
-    start,
-    start + POSTS_PER_PAGE - 1
-  );
 
   let posts: Post[] = [];
+  let counts: number[] = [];
+  let voted: boolean[] = [];
   const authors: Record<string, User> = {};
 
-  if (postIds.length > 0) {
-    const pipeline = redis.pipeline();
-    for (const pid of postIds) {
-      pipeline.get(keys.post(pid as string));
+  if (allPostIds.length > 0) {
+    const postPipeline = redis.pipeline();
+    for (const pid of allPostIds) {
+      postPipeline.get(keys.post(pid as string));
     }
-    posts = (await pipeline.exec()).filter(Boolean) as Post[];
+    const postResults = await postPipeline.exec();
+    posts = postResults.filter(Boolean) as Post[];
+
+    const votePipeline = redis.pipeline();
+    for (const p of posts) {
+      votePipeline.scard(keys.postUpvotes(p.id));
+    }
+    if (currentUser) {
+      for (const p of posts) {
+        votePipeline.sismember(keys.postUpvotes(p.id), currentUser.id);
+      }
+    }
+    const voteResults = await votePipeline.exec();
+    counts = voteResults.slice(0, posts.length).map((v) => (v as number) || 0);
+    voted = currentUser
+      ? voteResults
+          .slice(posts.length)
+          .map((v) => Boolean(v as number))
+      : posts.map(() => false);
 
     const authorIds = [...new Set(posts.map((p) => p.author_id))];
     const authorPipeline = redis.pipeline();
@@ -74,8 +91,36 @@ export default async function ThreadPage({
     });
   }
 
-  // Calculate global post number offset
-  const postOffset = start;
+  // Enrich, sort by upvotes desc (tiebreak by created_at asc), pin OP on page 1
+  const enriched: PostWithVotes[] = posts.map((p, i) => ({
+    ...p,
+    upvote_count: counts[i] ?? 0,
+    viewer_voted: voted[i] ?? false,
+  }));
+
+  enriched.sort((a, b) => {
+    if (b.upvote_count !== a.upvote_count) return b.upvote_count - a.upvote_count;
+    return new Date(a.created_at).getTime() - new Date(b.created_at).getTime();
+  });
+
+  if (page === 1 && enriched.length > 1) {
+    let opIdx = 0;
+    for (let i = 1; i < enriched.length; i++) {
+      if (
+        new Date(enriched[i].created_at).getTime() <
+        new Date(enriched[opIdx].created_at).getTime()
+      ) {
+        opIdx = i;
+      }
+    }
+    if (opIdx > 0) {
+      const [op] = enriched.splice(opIdx, 1);
+      enriched.unshift(op);
+    }
+  }
+
+  const start = (page - 1) * POSTS_PER_PAGE;
+  const pagePosts = enriched.slice(start, start + POSTS_PER_PAGE);
 
   return (
     <div>
@@ -135,9 +180,8 @@ export default async function ThreadPage({
 
       {/* Posts */}
       <div style={{ marginTop: 12 }}>
-        {posts.map((post, i) => {
+        {pagePosts.map((post) => {
           const author = authors[post.author_id];
-          const postNumber = postOffset + i + 1;
           const date = new Date(post.created_at);
 
           return (
@@ -209,10 +253,15 @@ export default async function ThreadPage({
                     })}
                   </span>
                   <span style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                    <UpvoteButton
+                      postId={post.id}
+                      initialCount={post.upvote_count}
+                      initialVoted={post.viewer_voted}
+                      canVote={!!currentUser}
+                    />
                     {currentUser?.is_admin && (
                       <DeletePostButton postId={post.id} />
                     )}
-                    <span style={{ color: "#888" }}>#{postNumber}</span>
                   </span>
                 </div>
                 <PostBody content={post.content} />

@@ -80,12 +80,14 @@ export default async function ForumIndex() {
         }
         const allThreads = (await pipeline.exec()).filter(Boolean) as Thread[];
 
-        const pinned = allThreads
-          .filter((t) => t.is_pinned)
-          .sort((a, b) => new Date(b.last_reply_at).getTime() - new Date(a.last_reply_at).getTime());
+        const byRepliesThenLastReply = (a: Thread, b: Thread) => {
+          if (b.replies_count !== a.replies_count) return b.replies_count - a.replies_count;
+          return new Date(b.last_reply_at).getTime() - new Date(a.last_reply_at).getTime();
+        };
+        const pinned = allThreads.filter((t) => t.is_pinned).sort(byRepliesThenLastReply);
         const regular = allThreads
           .filter((t) => !t.is_pinned)
-          .sort((a, b) => new Date(b.last_reply_at).getTime() - new Date(a.last_reply_at).getTime())
+          .sort(byRepliesThenLastReply)
           .slice(0, 10);
 
         const threads = [...pinned, ...regular];

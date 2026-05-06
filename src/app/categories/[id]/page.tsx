@@ -39,12 +39,12 @@ export default async function CategoryPage({
     allThreads = (await pipeline.exec()).filter(Boolean) as Thread[];
   }
 
-  const pinnedThreads = allThreads
-    .filter((t) => t.is_pinned)
-    .sort((a, b) => new Date(b.last_reply_at).getTime() - new Date(a.last_reply_at).getTime());
-  const regularThreads = allThreads
-    .filter((t) => !t.is_pinned)
-    .sort((a, b) => new Date(b.last_reply_at).getTime() - new Date(a.last_reply_at).getTime());
+  const byRepliesThenLastReply = (a: Thread, b: Thread) => {
+    if (b.replies_count !== a.replies_count) return b.replies_count - a.replies_count;
+    return new Date(b.last_reply_at).getTime() - new Date(a.last_reply_at).getTime();
+  };
+  const pinnedThreads = allThreads.filter((t) => t.is_pinned).sort(byRepliesThenLastReply);
+  const regularThreads = allThreads.filter((t) => !t.is_pinned).sort(byRepliesThenLastReply);
 
   // Paginate only regular threads
   const totalRegular = regularThreads.length;

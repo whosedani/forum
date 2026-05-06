@@ -21,6 +21,7 @@ export const keys = {
   postsCounter: () => `${P}posts:counter`,
   threadPosts: (id: string) => `${P}thread:${id}:posts`,
   post: (id: string) => `${P}post:${id}`,
+  postUpvotes: (id: string) => `${P}post:${id}:upvotes`,
 
   modLog: () => `${P}mod:log`,
 };
