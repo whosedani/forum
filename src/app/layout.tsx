@@ -69,7 +69,7 @@ export default async function RootLayout({
             color: "#888",
           }}
         >
-          Powered by Forum
+          Powered by Nudaeng
         </footer>
       </body>
     </html>
