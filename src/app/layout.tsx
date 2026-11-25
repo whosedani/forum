@@ -10,10 +10,10 @@ import type { ForumConfig } from "@/lib/types";
 import type { User } from "@/lib/types";
 
 export const metadata: Metadata = {
-  title: "Forum",
+  title: "Nudaeng",
   description: "Forum - Discussion Board",
   icons: {
-    icon: "/favicon.jpeg",
+    icon: "/favicon.png",
   },
 };
 
@@ -23,7 +23,7 @@ export default async function RootLayout({
   children: React.ReactNode;
 }) {
   let user: User | null = null;
-  let config: ForumConfig = { ...DEFAULT_FORUM_CONFIG, name: "Forum" };
+  let config: ForumConfig = { ...DEFAULT_FORUM_CONFIG, name: "Nudaeng" };
 
   try {
     const token = await getTokenFromCookies();

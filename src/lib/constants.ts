@@ -7,7 +7,7 @@ export const MAX_AVATAR_SIZE = 2 * 1024 * 1024; // 2MB
 export const DEFAULT_AVATAR = "/static/default-avatar.svg";
 
 export const DEFAULT_FORUM_CONFIG = {
-  name: "Forum",
+  name: "Nudaeng",
   description: "Forum - Discussion Board",
   logo_url: "",
 };
